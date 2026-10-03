@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { apiConfig } from "../config";
+import { config } from "../config";
 
 export function updateServerHits(req: Request, res: Response, next: NextFunction) {
-    apiConfig.fileserverHits++;
+    config.api.fileserverHits++;
     next();
 };

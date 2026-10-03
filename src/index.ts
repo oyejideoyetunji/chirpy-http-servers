@@ -1,20 +1,38 @@
+import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import express from "express";
-import { errorHandler, nonOkRequestLogger, parseJson, updateServerHits } from "./middlewares";
+import postgres from "postgres";
+import { config } from "./config";
+import {
+  errorHandler,
+  nonOkRequestLogger,
+  parseJson,
+  updateServerHits,
+} from "./middlewares";
 import { adminRouter } from "./routes/admin";
-import { apiRouter } from "./routes/api";
+import { chirpRouter } from "./routes/chirps";
+import { userRouter } from "./routes/users";
 
-const app = express();
-const PORT = 8080
+async function main() {
+  const migrationClient = postgres(config.db.url, { max: 1 });
+  await migrate(drizzle(migrationClient), config.db.migrationConfig);
 
-app.use(parseJson)
-app.use(nonOkRequestLogger);
+  const app = express();
+  const PORT = config.api.port;
 
-app.use("/app", updateServerHits, express.static("public"));
-app.use("/api", apiRouter);
-app.use("/admin", adminRouter)
+  app.use(parseJson);
+  app.use(nonOkRequestLogger);
 
-app.use(errorHandler)
+  app.use("/app", updateServerHits, express.static("public"));
+  app.use("/api/chirps", chirpRouter);
+  app.use("/api/users", userRouter);
+  app.use("/admin", adminRouter);
 
-app.listen(PORT, () => {
+  app.use(errorHandler);
+
+  app.listen(PORT, () => {
     console.log(`Server is now running at http://localhost:${PORT}`);
-});
+  });
+}
+
+main();

@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { apiConfig } from "../../config";
+import { config } from "../../config";
+import { deleteUsers } from "../../db";
+import { Forbidden } from "../../shared/types";
 
 const router = Router();
 
@@ -10,15 +12,24 @@ router.get("/metrics", (req, res) => {
     <html>
       <body>
         <h1>Welcome, Chirpy Admin</h1>
-        <p>Chirpy has been visited ${apiConfig.fileserverHits} times!</p>
+        <p>Chirpy has been visited ${config.api.fileserverHits} times!</p>
       </body>
     </html>
   `);
 });
 
-router.post("/reset", (req, res) => {
-  apiConfig.fileserverHits = 0;
-  res.send("Hits reset to 0");
+router.post("/reset", async (req, res) => {
+  const platform = config.api.platform;
+
+  if (platform !== "dev") {
+    throw new Forbidden();
+  }
+
+  config.api.fileserverHits = 0;
+
+  await deleteUsers();
+
+  res.send( { message: "Hits and users reset to 0" });
 });
 
 export const adminRouter: Router = router;

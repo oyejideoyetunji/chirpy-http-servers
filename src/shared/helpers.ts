@@ -1,3 +1,6 @@
+process.loadEnvFile();
+
+
 import type { Request } from "express";
 
 export function parseRequestBody(req: Request) {
@@ -20,4 +23,14 @@ export function parseRequestBody(req: Request) {
             resolve(null);
         })
     });
+}
+
+export function envOrThrow(key: string) {
+    const value = process.env[key];
+
+    if (!value) {
+        throw new Error(`Failed to load env variable ${key}`);
+    }
+
+    return value;
 }
