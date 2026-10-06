@@ -1,20 +1,22 @@
-import { eq, or } from "drizzle-orm";
-import { users, type CreateUserParams } from "../schema";
+import { eq } from "drizzle-orm";
+import { users, type CreateUserParams, type UserResponse } from "../schema";
 import { db } from "../setup";
+
+const userResponse = { id: users.id, createdAt: users.createdAt, updatedAt: users.updatedAt, email: users.email }
 
 export async function createUsers(payload: CreateUserParams[]) {
     const result = await db
         .insert(users)
         .values(payload)
         .onConflictDoNothing()
-        .returning();
+        .returning(userResponse);
     
     return result;
 }
 
 export async function getUserById(id: string) {
     const [ result ] = await db
-        .select()
+        .select(userResponse)
         .from(users)
         .where(eq(users.id, id));
 
@@ -22,6 +24,15 @@ export async function getUserById(id: string) {
 }
 
 export async function getUserByEmail(email: string) {
+    const [ result ] = await db
+        .select(userResponse)
+        .from(users)
+        .where(eq(users.email, email));
+
+    return result;
+}
+
+export async function getUser(email: string) {
     const [ result ] = await db
         .select()
         .from(users)
