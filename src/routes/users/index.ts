@@ -1,17 +1,28 @@
 import { Router, type Request, type Response } from "express";
-import { BadRequest, NotFound } from "../../shared/types";
 import { createUsers, getUserByEmail } from "../../db";
+import { BadRequest, NotFound } from "../../shared/types";
+import { hashPassword } from "../shared/helpers";
 
 export const userRouter: Router = Router();
 
 userRouter.post("", async (req: Request, res: Response) => {
     const payload = req.body;
 
-    if (!payload || typeof payload.email !== "string") {
+    if (!payload) {
+        throw new BadRequest("Bad request, request body is empty");
+    }
+
+    if (typeof payload.email !== "string") {
         throw new BadRequest("Bad request, email is required");
     }
 
-    const [ user ] = await createUsers([{ email: payload.email }]);
+    if (typeof payload.password !== "string") {
+        throw new BadRequest("Bad request, password is required");
+    }
+
+    const hashedPassword = await hashPassword(payload.password)
+
+    const [ user ] = await createUsers([{ email: payload.email, hashedPassword }]);
 
     if (!user) {
         throw new Error("Could not create user");
@@ -35,4 +46,3 @@ userRouter.get("/:id", async (req: Request, res: Response) => {
 
     res.send(user);
 });
-
