@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { BadRequest, NotFound, Unauthorized } from "../../shared/types";
+import { BadRequest, NotFound, Unauthorized } from "../../shared/error";
 import { createChirps, getChirp, getChirps, getUserById } from "../../db";
 
 export const chirpRouter: Router = Router();

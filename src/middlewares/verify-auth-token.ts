@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from "express";
-import { Unauthorized } from "../shared/types";
+import { Unauthorized } from "../shared/error";
 import { getBearerToken, validateJWT } from "../routes/shared/helpers";
 import { getUserById } from "../db";
 import { config } from "../config";

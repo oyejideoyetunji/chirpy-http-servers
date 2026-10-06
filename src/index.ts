@@ -23,12 +23,12 @@ async function main() {
     const app = express();
     const PORT = config.api.port;
 
-    app.use(nonOkRequestLogger);
     app.use(parseJson);
-    app.use("/api/login", loginRouter);
-    app.use("/app", updateServerHits, express.static("public"));
+    app.use(nonOkRequestLogger);
     app.use("/admin", adminRouter);
     app.use("/api/users", userRouter);
+    app.use("/api/login", loginRouter);
+    app.use("/app", updateServerHits, express.static("public"));
 
     app.use(verifyAuthToken);
 

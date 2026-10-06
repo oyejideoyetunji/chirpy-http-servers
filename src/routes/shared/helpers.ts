@@ -2,7 +2,7 @@ import * as argon2 from "argon2";
 import Jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken"
 import { type Request } from "express";
-import { Unauthorized } from "../../shared/types";
+import { Unauthorized } from "../../shared/error";
 
 type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 

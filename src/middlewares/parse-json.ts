@@ -1,5 +1,4 @@
 import type { Request, Response, NextFunction } from "express";
-import { parseRequestBody } from "../shared/helpers";
 
 export async function parseJson(req: Request, res: Response, next: NextFunction) {
   if (req.headers["content-type"] !== "application/json") {
@@ -10,4 +9,26 @@ export async function parseJson(req: Request, res: Response, next: NextFunction)
 
   req["body"] = body;
   next();
+}
+
+function parseRequestBody(req: Request) {
+  return new Promise<any>((resolve) => {
+      let data = "";
+  
+      req.on("data", (chunk) => {
+        data += chunk;
+      });
+
+      req.on("end", () => {
+          try {
+              resolve(JSON.parse(data));
+          } catch (error) {
+              resolve(null);
+          }
+      });
+
+      req.on("error", () => {
+          resolve(null);
+      })
+  });
 }

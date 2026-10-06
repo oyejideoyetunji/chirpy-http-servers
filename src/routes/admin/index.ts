@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { config } from "../../config";
 import { deleteUsers } from "../../db";
-import { Forbidden } from "../../shared/types";
+import { Forbidden } from "../../shared/error";
 
 const router = Router();
 

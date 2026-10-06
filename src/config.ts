@@ -1,5 +1,16 @@
-import { envOrThrow } from "./shared/helpers";
+process.loadEnvFile();
+
 import type { MigrationConfig } from "drizzle-orm/migrator";
+
+function envOrThrow(key: string) {
+    const value = process.env[key];
+
+    if (!value) {
+        throw new Error(`Failed to load env variable ${key}`);
+    }
+
+    return value;
+}
 
 const url = envOrThrow("DB_URL");
 const port = envOrThrow("PORT");

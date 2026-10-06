@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { createUsers, getUserByEmail } from "../../db";
-import { BadRequest, NotFound } from "../../shared/types";
+import { BadRequest, NotFound } from "../../shared/error";
 import { hashPassword } from "../shared/helpers";
 
 export const userRouter: Router = Router();

@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { ClientError } from "../shared/types";
+import { ClientError } from "../shared/error";
 
 export function errorHandler(error: unknown, req: Request, res: Response, next: NextFunction) {
     console.log(error);

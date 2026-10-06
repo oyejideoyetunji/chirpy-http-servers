@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { getUser } from "../../db";
-import { BadRequest, Unauthorized } from "../../shared/types";
+import { BadRequest, Unauthorized } from "../../shared/error";
 import { checkPasswordHash, makeJWT } from "../shared/helpers";
 import { config } from "../../config";
 
