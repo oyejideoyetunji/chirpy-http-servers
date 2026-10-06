@@ -4,6 +4,7 @@ import type { MigrationConfig } from "drizzle-orm/migrator";
 const url = envOrThrow("DB_URL");
 const port = envOrThrow("PORT");
 const platform = envOrThrow("PLATFORM");
+const jwtSecrete = envOrThrow("JWT_SECRETE");
 
 type DBConfig = {
     url: string;
@@ -13,6 +14,7 @@ type DBConfig = {
 type APIConfig = {
     port: number;
     platform: string;
+    jwtSecrete: string;
     fileserverHits: number;
 };
 
@@ -33,6 +35,7 @@ const db: DBConfig = {
 const api: APIConfig = {
     port: Number(port),
     platform,
+    jwtSecrete,
     fileserverHits: 0,
 };
 

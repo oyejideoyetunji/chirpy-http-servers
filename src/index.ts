@@ -8,31 +8,40 @@ import {
   nonOkRequestLogger,
   parseJson,
   updateServerHits,
+  verifyAuthToken,
 } from "./middlewares";
 import { adminRouter } from "./routes/admin";
 import { chirpRouter } from "./routes/chirps";
+import { loginRouter } from "./routes/login";
 import { userRouter } from "./routes/users";
 
 async function main() {
-  const migrationClient = postgres(config.db.url, { max: 1 });
-  await migrate(drizzle(migrationClient), config.db.migrationConfig);
+  try {
+    const migrationClient = postgres(config.db.url, { max: 1 });
+    await migrate(drizzle(migrationClient), config.db.migrationConfig);
 
-  const app = express();
-  const PORT = config.api.port;
+    const app = express();
+    const PORT = config.api.port;
 
-  app.use(parseJson);
-  app.use(nonOkRequestLogger);
+    app.use(nonOkRequestLogger);
+    app.use(parseJson);
+    app.use("/api/login", loginRouter);
+    app.use("/app", updateServerHits, express.static("public"));
+    app.use("/admin", adminRouter);
+    app.use("/api/users", userRouter);
 
-  app.use("/app", updateServerHits, express.static("public"));
-  app.use("/api/chirps", chirpRouter);
-  app.use("/api/users", userRouter);
-  app.use("/admin", adminRouter);
+    app.use(verifyAuthToken);
 
-  app.use(errorHandler);
+    app.use("/api/chirps", chirpRouter);
 
-  app.listen(PORT, () => {
-    console.log(`Server is now running at http://localhost:${PORT}`);
-  });
+    app.use(errorHandler);
+
+    app.listen(PORT, () => {
+      console.log(`Server is now running at http://localhost:${PORT}`);
+    });
+  } catch {
+    console.log("There was an error")
+  }
 }
 
 main();
