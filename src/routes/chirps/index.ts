@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { BadRequest, NotFound, Unauthorized } from "../../shared/error";
-import { createChirps, getChirp, getChirps, getUserById } from "../../db";
+import { BadRequest, Forbidden, NotFound, Unauthorized } from "../../shared/error";
+import { createChirps, deleteChirps, getChirp, getChirps, getUserById } from "../../db";
+import { verifyAuthToken } from "../../middlewares";
 
 export const chirpRouter: Router = Router();
 
@@ -31,7 +32,7 @@ chirpRouter.get("/:id", async (req, res) => {
   res.send(chirp);
 });
 
-chirpRouter.post("", async (req, res) => {
+chirpRouter.post("", verifyAuthToken, async (req, res) => {
   const body = req.body;
 
   if (!body) {
@@ -63,3 +64,32 @@ chirpRouter.post("", async (req, res) => {
 
   res.status(201).send(chirp);
 });
+
+chirpRouter.delete("/:id", verifyAuthToken, async (req, res) => {
+  const chirpId = req.params.id;
+
+  if (typeof chirpId !== "string" || !chirpId) {
+    throw new BadRequest();
+  }
+
+  const auth = req.body.auth;
+
+  if (!auth?.userId) {
+    throw new Unauthorized();
+  }
+
+  const deleted = await deleteChirps(chirpId, auth.userId);
+
+  if (deleted) {
+    res.status(204).send({ message: "deleted" });
+    return;
+  }
+
+  const chirp = await getChirp(chirpId);
+
+  if (!chirp) {
+    throw new NotFound("chirp not found");
+  }
+
+  throw new Forbidden();
+})

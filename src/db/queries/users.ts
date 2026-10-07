@@ -41,10 +41,20 @@ export async function getUserWithHashedPassword(email: string) {
     return result;
 }
 
+export async function updateUser(userId: string, email: string, hashedPassword: string) {
+    const [ result ] = await db
+        .update(users)
+        .set({ email, hashedPassword })
+        .where(eq(users.id, userId))
+        .returning(userResponse);
+
+    return result;
+}
+
 export async function deleteUsers() {
     const result = await db
         .delete(users)
-        .returning();
+        .returning(userResponse);
 
     return result;
 }

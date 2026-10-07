@@ -36,6 +36,8 @@ export function validateJWT(tokenString: string, secret: string) {
 export function getBearerToken(req: Pick<Request, "headers">) {
     const token = req.headers.authorization?.split(" ")[1];
 
+    console.log("token: ", token);
+
     if (!token) {
         throw new Unauthorized();
     }

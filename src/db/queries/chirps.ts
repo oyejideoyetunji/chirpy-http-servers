@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { chirps, users, type CreateChirpsParams } from "../schema";
 import { db } from "../setup";
 
@@ -30,6 +30,15 @@ export async function getChirp(id: string) {
         .from(chirps)
         .innerJoin(users, eq(users.id, chirps.userId))
         .where(eq(chirps.id, id));
+
+    return result;
+}
+
+export async function deleteChirps(id: string, userId: string) {
+    const [result] = await db
+        .delete(chirps)
+        .where(and(eq(chirps.id, id), eq(chirps.userId, userId)))
+        .returning();
 
     return result;
 }
