@@ -6,8 +6,13 @@ import { config } from "../config";
 
 export async function verifyAuthToken(req: Request, _: Response, next: NextFunction) {
     const token = getBearerToken(req)
+    let data: any;
 
-    const data = validateJWT(token, config.api.jwtSecrete);
+    try {
+        data = validateJWT(token, config.api.jwtSecrete);
+    } catch {
+        throw new Unauthorized();
+    }
 
     if (!data || typeof data == "string" || !data.userId || !data.email || !data.exp) {
         throw new Unauthorized();

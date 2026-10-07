@@ -12,7 +12,7 @@ import {
 } from "./middlewares";
 import { adminRouter } from "./routes/admin";
 import { chirpRouter } from "./routes/chirps";
-import { loginRouter } from "./routes/login";
+import { loginRouter, refreshRouter, revokeRouter } from "./routes/auth";
 import { userRouter } from "./routes/users";
 
 async function main() {
@@ -28,6 +28,8 @@ async function main() {
     app.use("/admin", adminRouter);
     app.use("/api/users", userRouter);
     app.use("/api/login", loginRouter);
+    app.use("/api/revoke", revokeRouter);
+    app.use("/api/refresh", refreshRouter);
     app.use("/app", updateServerHits, express.static("public"));
 
     app.use(verifyAuthToken);

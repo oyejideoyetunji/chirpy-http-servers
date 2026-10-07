@@ -31,14 +31,14 @@ userRouter.post("", async (req: Request, res: Response) => {
     res.status(201).send(user);
 });
 
-userRouter.get("/:id", async (req: Request, res: Response) => {
-    const id = req.params.id;
+userRouter.get("/:email", async (req: Request, res: Response) => {
+    const email = req.params.email;
 
-    if (!id || typeof id !== "string") {
+    if (!email || typeof email !== "string") {
         throw new BadRequest();
     }
 
-    const user = await getUserByEmail(id);
+    const user = await getUserByEmail(email);
 
     if (!user) {
         throw new NotFound("user not found");

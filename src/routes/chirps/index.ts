@@ -56,7 +56,6 @@ chirpRouter.post("", async (req, res) => {
     throw new BadRequest("Invalid user");
   }
 
-  // const cleanedBody = body.body.replace(/kerfuffle|sharbert|fornax/ig, "****")
   const [ chirp ] = await createChirps([{
     userId: body.auth?.userId,
     body: body.body

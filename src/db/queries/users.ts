@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { users, type CreateUserParams, type UserResponse } from "../schema";
+import { users, type CreateUserParams } from "../schema";
 import { db } from "../setup";
 
 const userResponse = { id: users.id, createdAt: users.createdAt, updatedAt: users.updatedAt, email: users.email }
@@ -32,7 +32,7 @@ export async function getUserByEmail(email: string) {
     return result;
 }
 
-export async function getUser(email: string) {
+export async function getUserWithHashedPassword(email: string) {
     const [ result ] = await db
         .select()
         .from(users)
