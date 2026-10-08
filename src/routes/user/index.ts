@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from "express";
-import { createUsers, getUserByEmail, updateUser } from "../../db";
+import { createUsers, getUserByEmail, getUsers, updateUser } from "../../db";
 import { BadRequest, NotFound, Unauthorized } from "../../shared/error";
 import { hashPassword } from "../shared/helpers";
 import { verifyAuthToken } from "../../middlewares";
@@ -30,6 +30,11 @@ userRouter.post("", async (req: Request, res: Response) => {
     }
 
     res.status(201).send(user);
+});
+
+userRouter.get("", async (req: Request, res: Response) => {
+    const users = await getUsers(10);
+    res.send(users);
 });
 
 userRouter.get("/:email", async (req: Request, res: Response) => {

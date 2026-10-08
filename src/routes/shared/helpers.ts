@@ -1,10 +1,7 @@
 import * as argon2 from "argon2";
 import Jwt from "jsonwebtoken";
-import type { JwtPayload } from "jsonwebtoken"
 import { type Request } from "express";
 import { Unauthorized } from "../../shared/error";
-
-type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 
 type JWTParams = {
     userId: string;
@@ -35,8 +32,6 @@ export function validateJWT(tokenString: string, secret: string) {
 
 export function getBearerToken(req: Pick<Request, "headers">) {
     const token = req.headers.authorization?.split(" ")[1];
-
-    console.log("token: ", token);
 
     if (!token) {
         throw new Unauthorized();

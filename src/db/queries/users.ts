@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { users, type CreateUserParams } from "../schema";
 import { db } from "../setup";
 
-const userResponse = { id: users.id, createdAt: users.createdAt, updatedAt: users.updatedAt, email: users.email }
+const userResponse = { id: users.id, createdAt: users.createdAt, updatedAt: users.updatedAt, email: users.email, isChirpyRed: users.isChirpyRed };
 
 export async function createUsers(payload: CreateUserParams[]) {
     const result = await db
@@ -11,6 +11,15 @@ export async function createUsers(payload: CreateUserParams[]) {
         .onConflictDoNothing()
         .returning(userResponse);
     
+    return result;
+}
+
+export async function getUsers(limit: number) {
+    const result = await db
+        .select(userResponse)
+        .from(users)
+        .limit(limit);
+
     return result;
 }
 
@@ -45,6 +54,16 @@ export async function updateUser(userId: string, email: string, hashedPassword: 
     const [ result ] = await db
         .update(users)
         .set({ email, hashedPassword })
+        .where(eq(users.id, userId))
+        .returning(userResponse);
+
+    return result;
+}
+
+export async function upgradeUser(userId: string, isChirpyRed: boolean) {
+    const [ result ] = await db
+        .update(users)
+        .set({ isChirpyRed })
         .where(eq(users.id, userId))
         .returning(userResponse);
 

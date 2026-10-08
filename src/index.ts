@@ -14,6 +14,7 @@ import { adminRouter } from "./routes/admin";
 import { chirpRouter } from "./routes/chirps";
 import { loginRouter, refreshRouter, revokeRouter } from "./routes/auth";
 import { userRouter } from "./routes/user";
+import { polkaRouter } from "./routes/polka";
 
 async function main() {
   try {
@@ -31,6 +32,7 @@ async function main() {
     app.use("/api/chirps", chirpRouter);
     app.use("/api/revoke", revokeRouter);
     app.use("/api/refresh", refreshRouter);
+    app.use("/api/polka", polkaRouter)
     app.use("/app", updateServerHits, express.static("public"));
 
     app.use(errorHandler);
