@@ -1,12 +1,14 @@
 import { Router } from "express";
 import { upgradeUser } from "../../db";
 import { BadRequest, NotFound } from "../../shared/error";
+import { verifyAPIKey } from "../../middlewares/verify-api-key";
 
 export const polkaRouter: Router = Router();
 
 
 polkaRouter.post(
-    "/webhooks", 
+    "/webhooks",
+    verifyAPIKey,
     async (req, res) => {
         const body = req.body;
         const event = body["event"];
@@ -21,17 +23,18 @@ polkaRouter.post(
             return;
         }
 
-        try {
-            const user = await upgradeUser(userId, true);
+        let user: any;
 
-            if (!user) {
-                throw new NotFound();
-            }
-    
-            res.status(204).send();
+        try {
+            user = await upgradeUser(userId, true);
         } catch (error) {
             console.log(error);
             throw new Error();
         }
+
+        if (!user) {
+            throw new NotFound();
+        }
+        res.status(204).send();
     }
 );

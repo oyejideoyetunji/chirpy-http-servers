@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { chirps, users, type CreateChirpsParams } from "../schema";
 import { db } from "../setup";
 
@@ -11,13 +11,16 @@ export async function createChirps(payload: CreateChirpsParams[]) {
     return result;
 }
 
-export async function getChirps() {
+
+export async function getChirps(authorId?: string, sort?: string) {
     const result = await db
         .select({ 
             id: chirps.id, createdAt: chirps.createdAt, updatedAt: chirps.updatedAt, body: chirps.body, user: users.email
         })
         .from(chirps)
-        .innerJoin(users, eq(users.id, chirps.userId));
+        .innerJoin(users, eq(users.id, chirps.userId))
+        .where(authorId?.length ? eq(chirps.userId, authorId) : undefined)
+        .orderBy(sort === "desc" ? desc(chirps.createdAt) : asc(chirps.createdAt));
 
     return result;
 }

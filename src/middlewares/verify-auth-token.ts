@@ -24,7 +24,7 @@ export async function verifyAuthToken(req: Request, _: Response, next: NextFunct
         throw new Unauthorized();
     }
 
-    req["body"] = {...req["body"], auth : { ...data }}
+    req["body"] = {...req["body"], auth : { ...data }};
 
     next();
 }

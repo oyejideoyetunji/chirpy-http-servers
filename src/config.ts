@@ -16,6 +16,7 @@ const url = envOrThrow("DB_URL");
 const port = envOrThrow("PORT");
 const platform = envOrThrow("PLATFORM");
 const jwtSecrete = envOrThrow("JWT_SECRETE");
+const polkaKey = envOrThrow("POLKA_KEY");
 
 type DBConfig = {
     url: string;
@@ -25,6 +26,7 @@ type DBConfig = {
 type APIConfig = {
     port: number;
     platform: string;
+    polkaKey: string;
     jwtSecrete: string;
     fileserverHits: number;
 };
@@ -46,6 +48,7 @@ const db: DBConfig = {
 const api: APIConfig = {
     port: Number(port),
     platform,
+    polkaKey,
     jwtSecrete,
     fileserverHits: 0,
 };

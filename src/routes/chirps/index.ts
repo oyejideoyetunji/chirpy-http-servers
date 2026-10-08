@@ -11,8 +11,10 @@ chirpRouter.get("/healthz", (req, res) => {
     .send("OK");
 });
 
-chirpRouter.get("", async (_, res) => {
-  const chirps = await getChirps();
+chirpRouter.get("", async (req, res) => {
+  const authorId = req.query?.authorId as string | undefined;
+  const sort = req.query?.sort as string | undefined;
+  const chirps = await getChirps(authorId, sort);
   res.send(chirps);
 });
 

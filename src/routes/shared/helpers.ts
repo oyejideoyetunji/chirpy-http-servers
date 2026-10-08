@@ -31,11 +31,35 @@ export function validateJWT(tokenString: string, secret: string) {
 }
 
 export function getBearerToken(req: Pick<Request, "headers">) {
-    const token = req.headers.authorization?.split(" ")[1];
+    const {name, token} = extractAuthToken(req);
+
+    if (name.toLowerCase() !== "bearer" || !token) {
+        throw new Unauthorized();
+    }
+
+    return token;
+}
+
+export function getAPIKey(req: Pick<Request, "headers">) {
+    const {token} = extractAuthToken(req);
 
     if (!token) {
         throw new Unauthorized();
     }
 
     return token;
+}
+
+function extractAuthToken(req: Pick<Request, "headers">) {
+    if (typeof req.headers.authorization !== "string") {
+        throw new Unauthorized();
+    }
+
+    const auth = req.headers.authorization.split(" ");
+
+    if (auth.length !== 2 || !auth[0] || !auth[1]) {
+        throw new Unauthorized();
+    }
+
+    return { name: auth[0], token: auth[1] };
 }
